@@ -2,25 +2,26 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- GPS, Kakao Map API permission 정보 -->
+    <!-- GPS API permission 정보 -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
-    <!-- App Key 추가 -->
-    <meta-data android:name="com.kakao.sdk.AppKey" android:value="a8c6ef30a90ebbac4cf11e676e9bf59e"/>
-
     <application
-        android:usesCleartextTraffic="true"
         android:allowBackup="true"
-
+                 
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
+
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Mjoh"
+
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication"
+
         tools:targetApi="31">
         <activity
             android:name=".MainActivity"
