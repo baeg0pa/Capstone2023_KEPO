@@ -1,25 +1,22 @@
 package com.example.myapplication;
 
-import android.content.Context;
 import android.content.pm.PackageManager;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -36,11 +33,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     Date mDate;
     SimpleDateFormat mFormat;
     private TextView txtime;
+    private double latitude;
+    private double longitude;
+    private gps_db dbHelper;
+    private String currentTime; //현재 시간
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) { //생성자
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // 데이터베이스 도우미 객체 생성
+        dbHelper = new gps_db(MainActivity.this);
 
         txtLatitude = findViewById(R.id.txtLatitude);
         txtLongitude = findViewById(R.id.txtLongitude);
@@ -74,6 +79,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     private void obtainLocation() {
         Location location;
+        mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        currentTime = mFormat.format(new Date()); // 현재 시간을 currentTime 변수에 할당
+
+        dbHelper.insertLocation(latitude, longitude, currentTime);
 
         // 위치 권한이 허용되지 않았을 경우 메서드 종료
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -111,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             }
         }
 
-        /*if (location != null) {
+        if (location != null) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
             String currentTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(new Date());
@@ -128,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 dbHelper.resetDatabase();
                 dbHelper.insertDate(currentDate);
             }
-        }*/
+        }
     }
 
     //---time
@@ -140,26 +149,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onClick(View v) {
-
         if (v.getId() == R.id.timebtn) {
             txtime.setText(getTime());
+            currentTime = getTime();
         } else {
             txtime.setText("문자열 변환");
         }
-        /*if (v.getId() == R.id.timebtn) {
+        if (v.getId() == R.id.timebtn) {
             String currentTime = getTime();
             String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
 
             // 데이터베이스에 현재 위치 정보 삽입
-            gps_db dbHelper = new gps_db(time.this);
-            dbHelper.insertLocation(latitude, longitude, currentTime);
+            try (gps_db dbHelper = new gps_db(MainActivity.this)) {
+                dbHelper.insertLocation(latitude, longitude, currentTime);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
             // 데이터베이스 초기화
             if (!dbHelper.checkDateExists(currentDate)) {
                 dbHelper.resetDatabase();
                 dbHelper.insertDate(currentDate);
             }
-        }*/
+        }
     }
 
     //---time
@@ -182,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     @Override
     public void onLocationChanged(Location location) {
-        double latitude = location.getLatitude();
-        double longitude = location.getLongitude();
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
         //새로운 위치의 위도와 경도를 가져옴.
 
         String latitudeText = getString(R.string.latitude_text, latitude);
@@ -221,6 +233,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        dbHelper.close();
         Log.d("MainActivity", "onDestroy() called");
     }
 }

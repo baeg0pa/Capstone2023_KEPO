@@ -1,4 +1,3 @@
-/*
 package com.example.myapplication;
 
 import android.content.Context;
@@ -11,7 +10,6 @@ public class gps_db extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "GPS_location.db";
     private static final String TABLE_NAME = "location_table";
     private static final String COL_ID = "id";
-    private static final String COL_NO = "no";
     private static final String COL_LATITUDE = "latitude";
     private static final String COL_LONGITUDE = "longitude";
     private static final String COL_TIME = "time";
@@ -22,8 +20,7 @@ public class gps_db extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        String createTableQuery = "CREATE TABLE " + TABLE_NAME + " (" +
-                COL_NO + " INTEGER AUTOINCREMENT, " +
+        String createTableQuery = "CREATE TABLE " + TABLE_NAME + "(" +
                 COL_ID + " INTEGER PRIMARY KEY, " + //기본키
                 COL_LATITUDE + " REAL, " +
                 COL_LONGITUDE + " REAL, " +
@@ -70,5 +67,3 @@ public class gps_db extends SQLiteOpenHelper {
         db.close();
     }
 }
-
-*/
