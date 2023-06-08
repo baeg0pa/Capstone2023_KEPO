@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -16,6 +15,7 @@
         android:gravity="center"
         android:layout_marginBottom="16dp" />
 
+    <!--
     <TextView
         android:id="@+id/txtLatitude"
         android:layout_width="match_parent"
@@ -30,7 +30,7 @@
         android:layout_below="@+id/txtLatitude"
         android:text="@string/label_longitude"
         android:textSize="16sp" />
-  
+    -->
 
     <Button
         android:id="@+id/nextButton"
@@ -39,38 +39,3 @@
         android:text="@string/daum" />
 
 </LinearLayout>
-
-<!--
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingTop="16dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="16dp"
-    tools:context=".MainActivity">
-
-    <fragment android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/map"
-        android:name="com.naver.maps.map.MapFragment" />
-
-    <TextView
-        android:id="@+id/txtLatitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/label_latitude"
-        android:textSize="16sp" />
-
-    <TextView
-        android:id="@+id/txtLongitude"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/txtLatitude"
-        android:text="@string/label_longitude"
-        android:textSize="16sp" />
-
-</RelativeLayout>
-
--->

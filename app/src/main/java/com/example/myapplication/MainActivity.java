@@ -20,6 +20,8 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.naver.maps.map.NaverMapSdk;
+
 import java.io.IOException;
 
 import java.util.List;
@@ -36,7 +38,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+
+        // Naver Maps SDK 초기화
+        NaverMapSdk.getInstance(getApplicationContext()).setClient(
+                new NaverMapSdk.NaverCloudPlatformClient("rorz7rmft4")
+        );
+
+        setContentView(R.layout.map);
 
         // 위도, 경도
         txtLatitude = findViewById(R.id.txtLatitude);
