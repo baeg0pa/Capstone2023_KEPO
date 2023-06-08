@@ -1,6 +1,9 @@
 package com.example.myapplication;
 
+
+
 import android.content.pm.PackageManager;
+
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -8,6 +11,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,8 +25,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import com.naver.maps.map.NaverMapSdk;
+
 import java.util.List;
 import java.util.Locale;
+
+
 
 public class MainActivity extends AppCompatActivity implements LocationListener, View.OnClickListener {
     private TextView txtLatitude;
@@ -39,14 +48,23 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
     private String currentTime; //현재 시간
     private RecyclerView recyclerView;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) { //생성자
+    protected void onCreate(Bundle savedInstanceState)  {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
 
         // 데이터베이스 도우미 객체 생성
         dbHelper = new gps_db(MainActivity.this);
 
+        // Naver Maps SDK 초기화
+        NaverMapSdk.getInstance(getApplicationContext()).setClient(
+                new NaverMapSdk.NaverCloudPlatformClient("rorz7rmft4")
+        );
+
+        setContentView(R.layout.map);
+
+        // 위도, 경도
         txtLatitude = findViewById(R.id.txtLatitude);
         txtLongitude = findViewById(R.id.txtLongitude);
 
@@ -77,6 +95,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
 
     }
 
+
+
     private void obtainLocation() {
         Location location;
         mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
@@ -89,6 +109,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+
 
         // GPS 공급자를 사용하여 마지막으로 알려진 위치를 가져옴
         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -174,10 +195,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
     }
 
+  
     //---time
-
+    
+    // 위치정보 권한 체크 로직
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        // READ_PHONE_STATE의 권한 체크 결과를 불러온다
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             // 위치 권한 요청의 결과를 처리
@@ -187,10 +211,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             } else {
                 // 위치 권한이 거부된 경우, 해당 처리를 수행
                 Toast.makeText(this, "Location permissions denied", Toast.LENGTH_SHORT).show();
+
                 // 위치 권한 거부에 대한 처리를 추가적으로 구현할 수 있음
+                // Location permissions denied, handle according
             }
         }
     }
+
 
     @Override
     public void onLocationChanged(Location location) {

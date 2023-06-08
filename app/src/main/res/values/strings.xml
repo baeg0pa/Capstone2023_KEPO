@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">Butler</string>
+    <string name="app_name">My Application</string>
+    <string name="butler" translatable="false">Butler에 오신 걸 환영합니다! 더 많은 혜택을 누리고 싶다면 이미지를 누르세요!</string>
+    <string name="butlers" translatable="false">Butler에 오신 걸 환영합니다! 더 많은 혜택을 누리고 싶다면 다음을 누르세요!</string>
+    <string name="daum" translatable="false">다음</string>
+    <string name="first">처음 이용이신가요?</string>
+    <string name="next">다음</string>
+    <string name="no">No</string>
+
     <string name="label_latitude">위도:</string>
     <string name="label_longitude">경도:</string>
     <string name="latitude_text">위도: %1$.4f</string>

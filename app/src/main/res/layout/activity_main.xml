@@ -1,13 +1,21 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingTop="16dp"
-    android:paddingRight="16dp"
-    android:paddingBottom="16dp"
-    tools:context=".MainActivity">
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="16dp">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/butlers"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <!--
     <TextView
         android:id="@+id/txtLatitude"
         android:layout_width="match_parent"
@@ -22,6 +30,13 @@
         android:layout_below="@+id/txtLatitude"
         android:text="@string/label_longitude"
         android:textSize="16sp" />
+    -->
+
+    <Button
+        android:id="@+id/nextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/daum" />
 
         <TextView
             android:id="@+id/txtime"
@@ -48,3 +63,6 @@
         android:layout_height="100dp" />
 
 </RelativeLayout>
+
+</LinearLayout>
+
