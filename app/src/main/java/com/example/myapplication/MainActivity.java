@@ -24,7 +24,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import com.openai.api.ChatCompletion;
+import com.openai.api.Gpt3;
+
+
 public class MainActivity extends AppCompatActivity implements LocationListener {
+
+public class MainActivity extends AppCompatActivity implements LocationListener, View.OnClickListener {
+    private TextView txtLatitude;
+    private TextView txtLongitude;
+
     private LocationManager locationManager;
     private Geocoder geocoder;
     long mNow;
@@ -43,6 +52,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         // 데이터베이스 도우미 객체 생성
         dbHelper = new gps_db(MainActivity.this);
+
+        // Naver Maps SDK 초기화
+        NaverMapSdk.getInstance(getApplicationContext()).setClient(
+                new NaverMapSdk.NaverCloudPlatformClient("rorz7rmft4")
+        );
+
+        setContentView(R.layout.map);
+
+        Gpt3.configure("YOUR_API_KEY");
+
+
+        // 위도, 경도
+        txtLatitude = findViewById(R.id.txtLatitude);
+        txtLongitude = findViewById(R.id.txtLongitude);
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         geocoder = new Geocoder(this, Locale.getDefault());
