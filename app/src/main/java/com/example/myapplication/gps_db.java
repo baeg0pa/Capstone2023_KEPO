@@ -13,9 +13,10 @@ public class gps_db extends SQLiteOpenHelper {
     private static final String COL_LATITUDE = "latitude";
     private static final String COL_LONGITUDE = "longitude";
     private static final String COL_TIME = "time";
-
+    private final SQLiteDatabase db; // SQLiteDatabase 멤버 변수 추가
     public gps_db(Context context) {
         super(context, DATABASE_NAME, null, 1);
+        db = getWritableDatabase(); // getWritableDatabase로 초기화
     }
 
     @Override
@@ -35,13 +36,17 @@ public class gps_db extends SQLiteOpenHelper {
     }
 
     public void insertLocation(double latitude, double longitude, String time) {
-        SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(COL_LATITUDE, latitude);
-        values.put(COL_LONGITUDE, longitude);
-        values.put(COL_TIME, time);
-        db.insert(TABLE_NAME, null, values);
-        db.close();
+        db.beginTransaction(); // 트랜잭션 시작
+        try {
+            ContentValues values = new ContentValues();
+            values.put(COL_LATITUDE, latitude);
+            values.put(COL_LONGITUDE, longitude);
+            values.put(COL_TIME, time);
+            db.insert(TABLE_NAME, null, values);
+            db.setTransactionSuccessful(); // 트랜잭션 성공으로 마킹
+        } finally {
+            db.endTransaction(); // 트랜잭션 종료
+        }
     }
 
     public boolean checkDateExists(String date) {
@@ -54,16 +59,12 @@ public class gps_db extends SQLiteOpenHelper {
     }
 
     public void resetDatabase() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME);
-        db.close();
+        db.delete(TABLE_NAME, null, null); // 테이블 내용 삭제
     }
 
     public void insertDate(String date) {
-        SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COL_TIME, date + " 00:00:00");
         db.insert(TABLE_NAME, null, values);
-        db.close();
     }
 }

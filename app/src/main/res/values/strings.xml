@@ -14,5 +14,16 @@
     <string name="gpsBtnStr">위치 불러오기</string>
     <string name="resetStr">초기화</string>
     <string name="hello">hello</string>
+    <string name="welcome">Welcome</string>
+    <string name="send_button_description">Send message</string>
+    <string name="write_here">Write here</string>
+    <string name="todo">TODO</string>
+    <string name="back">이전으로</string>
+    <string name="survey">설문조사</string>
+    <string name="talkStr">대화하기</string>
+    <string name="geoStr">지도(실시간)</string>
+    <string name="setting">setting</string>
+    <string name="welcomestr">Butler에 오신 걸 환영합니다! 더 많은 혜택을 누리고 싶다면 버튼을 누르세요!</string>
+    <string name="loginStr">로그인</string>
 
 </resources>

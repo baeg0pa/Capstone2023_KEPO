@@ -1,33 +1,26 @@
 package com.example.myapplication;
 
-
-
+import android.content.Intent;
 import android.content.pm.PackageManager;
-
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
-
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.naver.maps.map.NaverMapSdk;
-
 import java.util.List;
 import java.util.Locale;
 
@@ -35,27 +28,27 @@ import com.openai.api.ChatCompletion;
 import com.openai.api.Gpt3;
 
 
+public class MainActivity extends AppCompatActivity implements LocationListener {
 
 public class MainActivity extends AppCompatActivity implements LocationListener, View.OnClickListener {
     private TextView txtLatitude;
     private TextView txtLongitude;
+
     private LocationManager locationManager;
     private Geocoder geocoder;
     long mNow;
     Date mDate;
     SimpleDateFormat mFormat;
-    private TextView txtime;
     private double latitude;
     private double longitude;
     private gps_db dbHelper;
-    private String currentTime; //현재 시간
-    private RecyclerView recyclerView;
 
+    Button gptbtn;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)  {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
 
         // 데이터베이스 도우미 객체 생성
         dbHelper = new gps_db(MainActivity.this);
@@ -77,15 +70,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         geocoder = new Geocoder(this, Locale.getDefault());
 
-        //bind view --- time
-        txtime = findViewById(R.id.txtime);
-        Button timebtn = findViewById(R.id.timebtn);
-        //bind listener
-        timebtn.setOnClickListener(this);
-
-        mFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.getDefault());
-        // --- time
-
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Request location permissions if not granted
@@ -99,16 +83,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 1, this);
         }
 
+        insertLocationPeriodically();
+
+        gptbtn = findViewById(R.id.gptbtn);
+        gptbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 이전 화면으로 전환
+                Intent intent = new Intent(MainActivity.this, gpt_api.class);
+                startActivity(intent);
+            }
+        });
+
     }
-
-
 
     private void obtainLocation() {
         Location location;
         mFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
-        currentTime = mFormat.format(new Date()); // 현재 시간을 currentTime 변수에 할당
+        //현재 시간
+        String currentTime1 = mFormat.format(new Date()); // 현재 시간을 currentTime 변수에 할당
 
-        dbHelper.insertLocation(latitude, longitude, currentTime);
+        dbHelper.insertLocation(latitude, longitude, currentTime1);
 
         // 위치 권한이 허용되지 않았을 경우 메서드 종료
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -116,37 +111,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
             return;
         }
 
-
         // GPS 공급자를 사용하여 마지막으로 알려진 위치를 가져옴
         location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
         // 위치 정보를 사용하여 필요한 작업 수행
-        if (location != null) {
-            double latitude = location.getLatitude();
-            double longitude = location.getLongitude();
-
-            // 위도와 경도를 포맷팅된 문자열로 변환
-            String latitudeText = getString(R.string.latitude_text, latitude);
-            String longitudeText = getString(R.string.longitude_text, longitude);
-
-            // 텍스트 뷰에 위도와 경도를 설정하여 화면에 표시
-            txtLatitude.setText(latitudeText);
-            txtLongitude.setText(longitudeText);
-
-            try {
-                // 위도와 경도에 해당하는 주소 목록을 최대 10개까지 가져옴
-                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 10);
-                if (addresses != null && addresses.size() > 0) {
-                    // 첫 번째 주소의 주소 문자열과 전체 주소 정보를 로그로 출력
-                    String addressLine = addresses.get(0).getAddressLine(0);
-                    Log.e("위치", addresses.get(0).toString());
-                    Log.e("주소", addressLine);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
         if (location != null) {
             double latitude = location.getLatitude();
             double longitude = location.getLongitude();
@@ -164,46 +132,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
                 dbHelper.resetDatabase();
                 dbHelper.insertDate(currentDate);
             }
+
+            try {
+                // 위도와 경도에 해당하는 주소 목록을 최대 10개까지 가져옴
+                List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 10);
+                if (addresses != null && addresses.size() > 0) {
+                    // 첫 번째 주소의 주소 문자열과 전체 주소 정보를 로그로 출력
+                    String addressLine = addresses.get(0).getAddressLine(0);
+                    Log.e("위치", addresses.get(0).toString());
+                    Log.e("주소", addressLine);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
     }
 
-    //---time
     private String getTime() {
         mNow = System.currentTimeMillis();
         mDate = new Date(mNow);
         return mFormat.format(mDate);
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.timebtn) {
-            txtime.setText(getTime());
-            currentTime = getTime();
-        } else {
-            txtime.setText("문자열 변환");
-        }
-        if (v.getId() == R.id.timebtn) {
-            String currentTime = getTime();
-            String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
-
-            // 데이터베이스에 현재 위치 정보 삽입
-            try (gps_db dbHelper = new gps_db(MainActivity.this)) {
-                dbHelper.insertLocation(latitude, longitude, currentTime);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            // 데이터베이스 초기화
-            if (!dbHelper.checkDateExists(currentDate)) {
-                dbHelper.resetDatabase();
-                dbHelper.insertDate(currentDate);
-            }
-        }
-    }
-
-  
-    //---time
-    
     // 위치정보 권한 체크 로직
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -224,20 +175,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         }
     }
 
-
     @Override
     public void onLocationChanged(Location location) {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         //새로운 위치의 위도와 경도를 가져옴.
-
-        String latitudeText = getString(R.string.latitude_text, latitude);
-        String longitudeText = getString(R.string.longitude_text, longitude);
-        //형식화된 문자열을 가져와서 위도와 경도 값을 대체
-
-        txtLatitude.setText(latitudeText);
-        txtLongitude.setText(longitudeText);
-        //화면에 표시
 
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 10);
@@ -268,5 +210,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         super.onDestroy();
         dbHelper.close();
         Log.d("MainActivity", "onDestroy() called");
+    }
+
+    private void insertLocationPeriodically() {
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // 30분마다 현재 위치 정보를 데이터베이스에 삽입
+                obtainLocation();
+
+                // 다음 호출을 30분 뒤에 실행
+                handler.postDelayed(this, 30 * 60 * 1000);
+            }
+        }, 30 * 60 * 1000); // 앱 시작 후 첫 호출까지 30분 대기
     }
 }
