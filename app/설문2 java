@@ -1,0 +1,41 @@
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
+import android.widget.Toast;
+
+public class RestActivity extends AppCompatActivity {
+
+    private RadioGroup optionsRadioGroup;
+    private Button nextButton;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_rest);
+
+        optionsRadioGroup = findViewById(R.id.optionsRadioGroup);
+        nextButton = findViewById(R.id.nextButton);
+
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int selectedOptionId = optionsRadioGroup.getCheckedRadioButtonId();
+
+                if (selectedOptionId != -1) {
+                    RadioButton selectedOption = findViewById(selectedOptionId);
+                    String selectedOptionText = selectedOption.getText().toString();
+
+                    // Handle the selected option here
+                    // You can navigate to the next question page or perform any other action
+
+                    Toast.makeText(RestActivity.this, "Selected option: " + selectedOptionText, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RestActivity.this, "Please select an option", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+}
