@@ -31,6 +31,9 @@ import com.naver.maps.map.NaverMapSdk;
 import java.util.List;
 import java.util.Locale;
 
+import com.openai.api.ChatCompletion;
+import com.openai.api.Gpt3;
+
 
 
 public class MainActivity extends AppCompatActivity implements LocationListener, View.OnClickListener {
@@ -63,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener,
         );
 
         setContentView(R.layout.map);
+
+        Gpt3.configure("YOUR_API_KEY");
+
 
         // 위도, 경도
         txtLatitude = findViewById(R.id.txtLatitude);
