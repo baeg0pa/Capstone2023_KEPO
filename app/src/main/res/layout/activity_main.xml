@@ -38,4 +38,31 @@
         android:layout_height="wrap_content"
         android:text="@string/daum" />
 
+        <TextView
+            android:id="@+id/txtime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtLongitude"
+            android:layout_marginTop="30dp"
+            android:text="@string/hello" />
+
+        <Button
+            android:id="@+id/timebtn"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/txtime"
+            android:layout_marginTop="15dp"
+            android:text="@string/resetStr"
+            android:textSize="12sp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_below="@id/timebtn"
+        android:layout_marginTop="15dp"
+        android:layout_width="match_parent"
+        android:layout_height="100dp" />
+
+</RelativeLayout>
+
 </LinearLayout>
+
