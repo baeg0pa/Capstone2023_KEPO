@@ -9,7 +9,10 @@
 
     <string name="label_latitude">위도:</string>
     <string name="label_longitude">경도:</string>
+    <string name="latitude_text">위도: %1$.4f</string>
+    <string name="longitude_text">경도: %1$.4f</string>
+    <string name="gpsBtnStr">위치 불러오기</string>
+    <string name="resetStr">초기화</string>
+    <string name="hello">hello</string>
 
-    <string name="latitude_text">위도: %1$.2f</string>
-    <string name="longitude_text">경도: %1$.2f</string>
 </resources>
